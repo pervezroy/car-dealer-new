@@ -7,12 +7,12 @@ import { gbp, CarImage } from "@/components/CarCard";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
-  const [c] = await sql`SELECT make, model, variant FROM cars WHERE id = ${Number(params.id) || 0}`;
+  const [c] = await sql`SELECT make, model, variant FROM cars WHERE id = ${Number(params.id) || 0} AND status = 'available'`;
   return { title: c ? `${c.make} ${c.model} ${c.variant}` : "Car not found" };
 }
 
 export default async function Car({ params }) {
-  const [c] = await sql`SELECT * FROM cars WHERE id = ${Number(params.id) || 0}`;
+  const [c] = await sql`SELECT * FROM cars WHERE id = ${Number(params.id) || 0} AND status = 'available'`;
   if (!c) notFound();
 
   // Representative example: 10% deposit, 60 months.
@@ -44,9 +44,9 @@ export default async function Car({ params }) {
           <form className="stack" method="POST" action="/api/enquiry">
             <input type="hidden" name="type" value="reserve" />
             <input type="hidden" name="car_id" value={c.id} />
-            <input name="name" placeholder="Full name" required />
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="phone" type="tel" placeholder="Phone" />
+            <input name="name" placeholder="Full name" autoComplete="name" required />
+            <input name="email" type="email" placeholder="Email" autoComplete="email" required />
+            <input name="phone" type="tel" placeholder="Phone" autoComplete="tel" />
             <button className="btn alt">Reserve this car</button>
           </form>
         </aside>
